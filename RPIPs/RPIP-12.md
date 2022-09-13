@@ -26,6 +26,8 @@ Atlas will implement the following high-level features:
 - SaaS
 - Minor cleanup
 - Removal of total effective RPL stake
+- Referral contract
+- Miscellaneous
 
 ## Specification
 
@@ -98,15 +100,24 @@ is one of the several features specified.
 
 ### Use queue ETH
 
+See branch [improved-queue](https://github.com/rocket-pool/rocketpool/tree/improved-queue) for WIP implementation.
+
 ### Include queue capacity in maximum deposit size
 
+See branch [include-queue-in-capacity](https://github.com/rocket-pool/rocketpool/tree/include-queue-in-capacity) for WIP implementation.
+
 ### Scale assignments with deposit size
+
+See branch [scaled-assignments](https://github.com/rocket-pool/rocketpool/tree/scaled-assignments) for WIP implementation.
 
 ### SaaS
 Please see [RPIP-13](RPIP-13.md). Note that a vote on RPIP-12 (this RPIP) includes RPIP-13, since that
 is one of the several features specified.
 
 ### Removal of total effective RPL stake
+
+See branch [redstone-cleanup](https://github.com/rocket-pool/rocketpool/tree/redstone-cleanup) for WIP implementation.
+
 - Remove `_effectiveRplStake` argument from `rocketNetworkPrices.submitPrices` and `rocketNetworkPrices.executePrices` methods
 - Remove `inConsensus` method from `rocketNetworkPrices`
 - Remove `updateTotalEffectiveRPLStake` method from `rocketMinipoolManager`
@@ -115,13 +126,13 @@ is one of the several features specified.
 - Remove `calculateTotalEffectiveRPLStake` and `getTotalEffectiveRPLStake` in `rocketNodeStaking`
 - Update smartnode software to no longer calculate and submit the value for `_effectiveRplStake`
 
-### Commission Contract
+### Referral Contract
 The team has a high level design in hand for this, which had been blocked by the rETH time lock.
 Details to follow.
 
 ### Miscellaneous
-- More gas-efficient minipool deployment; proof of concept:
-  <https://github.com/rocket-pool/rocketpool/commit/7eba62c23777e1736a7f7cc9908b54909bc3286a>
+
+See branch [efficient-minipool-delegate](https://github.com/rocket-pool/rocketpool/tree/efficient-minipool-delegate) for WIP implementation.
 
 ## Security Considerations
 
