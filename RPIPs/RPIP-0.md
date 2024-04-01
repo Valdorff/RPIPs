@@ -3,7 +3,7 @@ rpip: 0
 title: Selecting Knoshua as Involuntary God Emperor of RP
 description: Replaces all governance with God Emperor decree; a methodology for enabling this despite the proposed God Emperor's desire to not be God Emperor
 author: Valdorff (@Valdorff)
-discussions-to: TBD
+discussions-to: https://dao.rocketpool.net/t/rpip-0-draft-and-sentiment-poll/2896
 status: Draft
 type: Meta
 created: 2023-04-01
