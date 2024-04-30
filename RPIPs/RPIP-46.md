@@ -57,32 +57,41 @@ This proposal also includes a small set of items for potential future use:
     5. When implemented, `surplus_share` SHOULD be renamed to something more specific
 
 ## Specification taking effect with Saturn 2
-1. Updating `voter_share_target`:
-   1. A new function SHALL be available to update `voter_share_target`, which MAY be called by anyone
+1. Updating `voter_share`:
+   1. A new function SHALL be available to update `voter_share`, which MAY be called by anyone
    2. It MUST revert if it's been called within the last 45 days
-   3. If <`voter_share_target` of total RPL is eligible to vote and the function succeeds:
-      1. `voter_share_target` is increased to `voter_share_target * (1+voter_share_relative_step)`
-      2. `surplus_share` is decreased by the difference between the old and new `voter_share_target`
-         1.- If this would reduce `surplus_share` below 0%, the function call MUST revert 
-   4. If >`voter_share_target` of total RPL is eligible to vote and the function succeeds:
-      1. `voter_share_target` is decreased to `voter_share_target / (1+voter_share_relative_step)`
-      2. `surplus_share` is increased by the difference between the old and new `voter_share_target`
-   5. Because this involves _voters_ modifying `voter_share`, there is an acknowledged conflict of interest here. As a result, changing this method of "Updating `voter_share_target`" SHALL require a supermajority vote with at least 75% of the vote in support of any change.
-2. `voter_share_relative_step` MAY be updated by pDAO vote; however, it SHALL require a supermajority vote with at least 75% of the vote in support of any change.
+   3. It MUST revert if the total RPL eligible to vote is between `voter_share_target_min` and `voter_share_target_max` (inclusive)
+   4. If <`voter_share_target_min` of total RPL is eligible to vote and the function succeeds:
+      1. `voter_share` is increased to `voter_share * (1+voter_share_relative_step)`
+      2. `surplus_share` is decreased by the difference between the old and new `voter_share`
+         1. If this would reduce `surplus_share` below 0%, the function call MUST revert 
+   5. If >`voter_share_target_max` of total RPL is eligible to vote and the function succeeds:
+      1. `voter_share` is decreased to `voter_share / (1+voter_share_relative_step)`
+      2. `surplus_share` is increased by the difference between the old and new `voter_share`
+   6. Because this involves _voters_ modifying `voter_share`, there is an acknowledged conflict of interest here. As a result, changing this method of "Updating `voter_share`" SHALL require a supermajority vote with at least 75% of the vote in support of any change.
+2. `voter_share_relative_step`, `voter_share_target_min` and `voter_share_target_max` MAY be updated by pDAO vote; however, it SHALL require a supermajority vote with at least 75% of the vote in support of any change.
 3. The initial settings SHALL be:
    1. `voter_share_relative_step`: 15%
-   2. `voter_share_target`: 60%
+   2. `voter_share_target_min`: 55%
+   3. `voter_share_target_max`: 65%
 
 ## Optional heuristics
 This section reflects some of the thinking at the time this RPIP was drafted. These ideas are explicitly _not_ binding/enforceable, and they may freely change over time/context.
 
-- Consider `node_operator_commission_share` as a requirement to function. If this is not high enough to attract the supply we need, the protocol is non-functional. At the same time, if we have significantly more supply than needed, we may freely decrease it. Offset the increase/decrease with a commensurate decrease/increase of `surplus_share`.
-- Consider `voter_share` as a requirement to function. There is a method specified that's intended to attract governance security effectively.
-- Finally, consider `surplus_share`. 
-  - If rETH demand has been robust enough to reach desired rETH TVL, `surplus_share` can be increased (without other settings changes, this means at the cost of `reth_share`). This is one way to fulfill the soft limits described in [RPIP-17](./RPIP-17.md).
-  - If below desired rETH TVL due to lack of rETH demand, `surplus_share` can be decreased. The surplus can either be directed to `reth_share` (without other settings changes) or to `pdao_treasury_share` (with a commensurate increase). Here voters should be considering how to most efficiently generate rETH demand given a fixed amount of funds.
+Some abstract guidelines:
+- Consider `node_operator_commission_share` as a requirement to function. If this is not high enough to attract the supply we need, the protocol is non-functional.
+- Consider `voter_share` as a requirement to function. There is a method specified that's intended to attract governance security effectively, ["Specification taking effect with Saturn 2"](#specification-taking-effect-with-saturn-2) .
+- Finally, consider `surplus_share`. RPL holders are incentivized to maximize something along the lines of `surplus_share * rETH_TVL`. This means voters will generally have an incentive to make rETH holding attractive.
 
-The premise here is that voters (who are all NOs and RPL holders) can operate fairly selfishly. They are strongly incentivized to keep node operation and rETH holding attractive -- these lead to strong TVL and thus capture a lot of value to RPL.
+Some example concrete guidelines:
+- If NO queue is continuously over 500 deposits for 2 weeks and trend is upwards, the pDAO should act to either increase rETH demand or decrease NO supply. This could use one or more of the following tactics:
+  - Eg, rETH demand can be increased by spending more RPL on marketing or partner incentives; that RPL can be sourced by increasing RPL inflation. This is beneficial because it allows targeted intervention to spur rETH demand.
+  - Eg, rETH demand can be increased by increasing `reth_share` alongside a counterbalancing decrease to `surplus_share`
+  - Eg, NO supply can be decreased by reducing `no_share` alongside a counterbalancing increase to `surplus_share`
+- If NO queue is continuously over 1000 deposits for 4 weeks and trend is upwards, the pDAO should take action to decrease NO supply
+- If `increase_no_share_seal_count` reaches 1, the pDAO should (a) consider adding seals, (b) consider stepping up `no_share` themselves, and (c) consider decreasing `reth_share`
+- When there are large changes to the system (eg, Saturn 2 release), do note that some volatility is expected and should be considered when acting
+- If we are approaching the self-limits described in [RPIP-17](RPIP-17.md), the pDAO should act to limit one or both of rETH demand (via reducing RPL inflation spend on rETH demand and/or lower `reth_share`) or NO supply (via lower `no_share`). This would result in higher `surplus_share` (or lower RPL inflation).
 
 ## Historic revenue share values
 | Date                         | Share Settings                                                                     |
