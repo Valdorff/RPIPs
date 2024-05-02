@@ -16,8 +16,8 @@ This proposal dramatically increases the LTV used in the protocol (loan to value
 - Enabling node-level penalties to mitigate/discourage MEV theft
 - Using forced exits as needed
 - Starting with lower LTV at lower total bonded ETH to mitigate/discourage MEV theft
-- Providing increased capital efficiency with greater bond to encourage an NO to stake as large nodes instead of many small nodes
 - Retaining sufficient bond per validator regardless of total stake to mitigate against slashing and abandonment 
+- Providing increased capital efficiency with greater bond to encourage an NO to stake as large nodes instead of many small nodes
 
 This proposal also explicitly tries to benefit the smallest NOs a few ways, in line with the pDAO charter values of decentralization and prioritizing Ethereum health (see [RPIP-23](./RPIP-23.md)):
 - We willingly take on somewhat more MEV-theft risk for the smallest NOs (see [Rationale](#rationale))
