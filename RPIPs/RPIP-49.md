@@ -7,6 +7,7 @@ discussions-to: https://dao.rocketpool.net/tag/tokenomics-rework
 status: Living
 type: Informational
 created: 2024-03-08
+tags: tokenomics-2024
 ---
 
 ## Abstract
