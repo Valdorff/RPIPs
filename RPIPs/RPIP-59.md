@@ -44,29 +44,32 @@ ETH from the deposit pool SHALL be matched with validator deposits from queues a
   - `express_queue_tickets_base_provision`: 2
 
 ### Deposit mechanics specification
-- A node operator MUST take 2 actions to start a validator: `deposit` and `stake`
+- A node operator MUST take 3 actions to start a validator: `deposit`, `prestake` and `stake`
 
 #### `deposit` Transaction
-- `deposit` SHALL place the Node Operator ETH in the deposit pool (where it can be used in validators as needed) and place the validator in a queue as described [above](#deposit-queue-specification)
-- The following values for the validator SHALL be stored on chain:
+- `deposit` SHALL place the Node Operator ETH in the deposit pool (where it can be used in validators as needed) and place the potential_validator in a queue as described [above](#deposit-queue-specification) 
+
+#### Assigning ETH from the Deposit Pool
+- ETH from the deposit pool SHALL be assigned to the potential_validator at the front of the queue by sending 32 ETH to the associated megapool contract
+  - rETH mints SHALL assign `ETH_deposit // 32` potential_validator
+  - There MUST be a permissionless function to execute assignments
+- The assignment SHALL remove the potential_validator from the queue
+
+#### `prestake` Transaction
+- This transaction MUST be callable once for each potential_validator that is assigned
+  - There SHALL be a permissionless function to (a) return 32 assigned ETH to the deposit pool and (b) give the Node Operator a credit equal to the ETH they deposited for this potential_validator, which will succeed if `prestake` has not been called and `time_before_dissolve` has passed since the ETH was assigned
+- The following values SHALL be provided in the `prestake` transaction:
     - the public key of the validator
     - the BLS signature over the public key, the withdrawal credentials (the megapool address of the node operator), and the amount (1 ETH) as required by the deposit contract
     - the deposit message root as required by the deposit contract
-- The transaction SHALL validate the provided values and revert if they do not match
-- `deposit` SHALL assign deposits as described below 
-
-#### Assigning ETH from the Deposit Pool
-- ETH from the deposit pool SHALL be assigned to validators to validator at the front of the queue by sending 32 ETH to the associated megapool contract
-  - rETH mints SHALL assign `ETH_deposit // 32` validators
-  - There MUST be a permissionless function to execute assignments
-- The assignment SHALL execute the `Prestake` transaction, staking 1 ETH to the beacon chain using the values provided in the step above
-- The assignment SHALL remove the validator from the queue 
+- The `prestake` transaction SHALL validate the provided values and revert if they do not match
+- The `prestake` transaction SHALL stake 1 ETH to the beacon chain using the values provided
 
 #### `stake` Transaction
 - `stake` SHALL revert unless at least `scrub_period` time has passed since ETH was assigned to the validator, to allow for validating the prestake
 - If the beacon chain stake is invalid, the validator SHALL be scrubbed 
 - `stake` SHALL stake the remaining 31 ETH to the beacon chain to make a complete validator
-- If `stake` is not called within `time_before_dissolve` after the ETH was assigned, the validator SHALL be dissolved, returning the unstaked balance to the deposit pool
+- There SHALL be a permissionless function to (a) return the 31 unstaked assigned ETH to the deposit pool and (b) dissolve the validator, which will succeed if `stake` has not been called and `time_before_dissolve` has passed since `prestake` was called
   - If a validator is dissolved the bonded value SHALL be recoverable. This MAY require further action from the node operator. This MAY temporarily require additional ETH from the node operator.
 
 #### Exiting Queue
